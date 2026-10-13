@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resident Dashboard - TrashWise</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background-color: #f1f8e9; font-family: 'Segoe UI', sans-serif; }
+        .navbar { background-color: #2e7d32; }
+        .navbar-brand, .navbar-text { color: white !important; }
+        .navbar .nav-link { color: rgba(255,255,255,0.85) !important; font-weight: 500; }
+        .navbar .nav-link:hover, .navbar .nav-link.active { color: #fff !important; }
+        .card { border: none; border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+        .btn-green { background-color: #2e7d32; color: white; border-radius: 8px; }
+        .btn-green:hover { background-color: #1b5e20; color: white; }
+        .btn-outline-green { border: 2px solid #2e7d32; color: #2e7d32; border-radius: 8px; }
+        .btn-outline-green:hover { background-color: #2e7d32; color: white; }
+        .table thead { background-color: #2e7d32; color: white; }
+        .quick-link { text-decoration: none; color: #1b5e20; transition: transform 0.2s; }
+        .quick-link:hover { transform: translateY(-4px); color: #1b5e20; }
+        .quick-link i { font-size: 1.6rem; color: #2e7d32; }
+        .notif-item.unread { background-color: #e8f5e9; }
+        #stars i { cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <img src="logo.png" alt="TrashWise Logo" height="42">
+                <span class="fw-bold">TrashWise</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link active" href="resident-dashboard.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="schedule.html">Schedule</a></li>
+                    <li class="nav-item"><a class="nav-link" href="segregation.html">Segregation Guide</a></li>
+                    <li class="nav-item"><a class="nav-link" href="disposal-locations.html">Disposal Locations</a></li>
+                    <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light btn-sm position-relative" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                            <i class="fas fa-bell"></i>
+                            <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;">0</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end p-0" style="width:330px;">
+                            <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+                                <strong>Notifications</strong>
+                                <button class="btn btn-link btn-sm p-0 text-decoration-none" onclick="markAllRead()">Mark all as read</button>
+                            </div>
+                            <div id="notifList" style="max-height:340px; overflow-y:auto;"></div>
+                        </div>
+                    </div>
+                    <span class="navbar-text" id="welcomeName">Welcome, Resident</span>
+                    <a href="#" class="btn btn-outline-light btn-sm" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4 mb-5">
+        <h2 class="fw-bold mb-4" style="color:#1b5e20;">Resident Dashboard</h2>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="mb-3" style="font-size:2rem; color:#2e7d32;"><i class="fas fa-clipboard-list"></i></div>
+                    <h5>Report Waste Issue</h5>
+                    <p class="text-muted small">Report overflowing bins, littering, or illegal dumping.</p>
+                    <a href="report.html" class="btn btn-green mt-2">Report Now</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="mb-3" style="font-size:2rem; color:#2e7d32;"><i class="fas fa-truck"></i></div>
+                    <h5>Request Collection</h5>
+                    <p class="text-muted small">Request waste collection for your area.</p>
+                    <a href="request-collection.html" class="btn btn-outline-green mt-2">Request Now</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center p-4">
+                    <div class="mb-3" style="font-size:2rem; color:#2e7d32;"><i class="fas fa-history"></i></div>
+                    <h5>My History</h5>
+                    <p class="text-muted small">View your reports and collection requests.</p>
+                    <a href="#history" class="btn btn-outline-green mt-2">View History</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-5">
+            <div class="col-6 col-md-3">
+                <a href="schedule.html" class="quick-link">
+                    <div class="card text-center p-3 h-100"><i class="fas fa-calendar-alt mb-2"></i><span class="fw-semibold">Collection Schedule</span></div>
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="segregation.html" class="quick-link">
+                    <div class="card text-center p-3 h-100"><i class="fas fa-book-open mb-2"></i><span class="fw-semibold">Segregation Guide</span></div>
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="disposal-locations.html" class="quick-link">
+                    <div class="card text-center p-3 h-100"><i class="fas fa-map-marker-alt mb-2"></i><span class="fw-semibold">Disposal Locations</span></div>
+                </a>
+            </div>
+            <div class="col-6 col-md-3">
+                <a href="profile.html" class="quick-link">
+                    <div class="card text-center p-3 h-100"><i class="fas fa-user-cog mb-2"></i><span class="fw-semibold">My Profile</span></div>
+                </a>
+            </div>
+        </div>
+
+        <div id="history" class="mb-5">
+            <h4 class="fw-bold mb-3" style="color:#1b5e20;">📜 My Waste Reports</h4>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Problem</th>
+                                    <th>Category</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportTableBody"></tbody>
+                        </table>
+                    </div>
+                    <p id="noReports" class="text-center text-muted mt-3" style="display:none;">No waste reports yet.</p>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <h4 class="fw-bold mb-3" style="color:#1b5e20;">🚚 My Collection Requests</h4>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Date Requested</th>
+                                    <th>Location</th>
+                                    <th>Waste Type</th>
+                                    <th>Amount</th>
+                                    <th>Preferred Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="collectionTableBody"></tbody>
+                        </table>
+                    </div>
+                    <p id="noCollections" class="text-center text-muted mt-3" style="display:none;">No collection requests yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:#2e7d32; color:white;">
+                    <h5 class="modal-title" id="detailTitle">Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detailBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback modal -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:#2e7d32; color:white;">
+                    <h5 class="modal-title">Rate this service</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-2">How satisfied are you with how this was handled?</p>
+                    <div id="stars" class="fs-3 mb-3">
+                        <i class="far fa-star text-warning" data-v="1"></i>
+                        <i class="far fa-star text-warning" data-v="2"></i>
+                        <i class="far fa-star text-warning" data-v="3"></i>
+                        <i class="far fa-star text-warning" data-v="4"></i>
+                        <i class="far fa-star text-warning" data-v="5"></i>
+                    </div>
+                    <label class="form-label">Comment (optional)</label>
+                    <textarea class="form-control" id="feedbackComment" rows="3" placeholder="Tell us more..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-green" onclick="submitFeedback()">Submit Feedback</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const loggedInUser = JSON.parse(localStorage.getItem('trashwise_loggedInUser') || 'null');
+        const isResident = loggedInUser && (!loggedInUser.role || loggedInUser.role === 'resident');
+
+        if (!isResident) {
+            alert("Please login first!");
+            window.location.href = "login.html";
+        } else {
+            document.getElementById('welcomeName').textContent =
+                `Welcome, ${loggedInUser.fullname || loggedInUser.username}`;
+        }
+
+        const uname = loggedInUser ? loggedInUser.username : '';
+        const seenKey = 'trashwise_seen_' + uname;
+        const notifKey = 'trashwise_notifs_' + uname;
+
+        let feedbackTarget = null;
+        let feedbackRating = 0;
+
+        function escapeHTML(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[ch]);
+        }
+
+        function getList(key) {
+            return JSON.parse(localStorage.getItem(key) || '[]');
+        }
+
+        function getMine(key) {
+            return getList(key).filter(x => x.username === uname);
+        }
+
+        function badgeClass(status) {
+            if (status === 'Pending') return 'bg-warning text-dark';
+            if (status === 'In Progress' || status === 'Scheduled') return 'bg-primary';
+            return 'bg-success';
+        }
+
+        function starsText(n) {
+            return '★'.repeat(n) + '☆'.repeat(5 - n);
+        }
+
+        
+        function syncNotifications(reports, collections) {
+            const seen = JSON.parse(localStorage.getItem(seenKey) || '{}');
+            const notifs = getList(notifKey);
+            const next = {};
+
+            reports.forEach(r => {
+                const k = 'r_' + r.id;
+                next[k] = r.status;
+                if (seen[k] !== undefined && seen[k] !== r.status) {
+                    notifs.unshift({
+                        id: Date.now() + Math.random(),
+                        text: `Your report "${r.problemType}" is now ${r.status}.`,
+                        date: new Date().toLocaleString(),
+                        read: false
+                    });
+                }
+            });
+
+            collections.forEach(c => {
+                const k = 'c_' + c.id;
+                next[k] = c.status;
+                if (seen[k] !== undefined && seen[k] !== c.status) {
+                    notifs.unshift({
+                        id: Date.now() + Math.random(),
+                        text: `Your collection request for ${c.location} is now ${c.status}.`,
+                        date: new Date().toLocaleString(),
+                        read: false
+                    });
+                }
+            });
+
+            localStorage.setItem(seenKey, JSON.stringify(next));
+            localStorage.setItem(notifKey, JSON.stringify(notifs.slice(0, 30)));
+        }
+
+        function renderNotifications() {
+            const notifs = getList(notifKey);
+            const unread = notifs.filter(n => !n.read).length;
+            const badge = document.getElementById('notifBadge');
+            badge.textContent = unread;
+            badge.style.display = unread ? 'inline-block' : 'none';
+
+            const box = document.getElementById('notifList');
+            if (notifs.length === 0) {
+                box.innerHTML = '<div class="text-center text-muted small p-3">No notifications yet.</div>';
+                return;
+            }
+            box.innerHTML = notifs.map(n => `
+                <div class="notif-item px-3 py-2 border-bottom ${n.read ? '' : 'unread'}">
+                    <div class="small">${escapeHTML(n.text)}</div>
+                    <div class="text-muted" style="font-size:0.75rem;">${escapeHTML(n.date)}</div>
+                </div>`).join('');
+        }
+
+        function markAllRead() {
+            const notifs = getList(notifKey);
+            notifs.forEach(n => n.read = true);
+            localStorage.setItem(notifKey, JSON.stringify(notifs));
+            renderNotifications();
+        }
+
+        
+        function renderReports(reports) {
+            const tbody = document.getElementById('reportTableBody');
+            tbody.innerHTML = '';
+            document.getElementById('noReports').style.display = reports.length ? 'none' : 'block';
+
+            reports.slice().reverse().forEach(r => {
+                let actions = `<button class="btn btn-sm btn-outline-green me-1" onclick="viewReport(${r.id})"><i class="fas fa-eye"></i> View</button>`;
+
+                if (r.status === 'Pending') {
+                    actions += `
+                        <a href="report.html?edit=${r.id}" class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-pen"></i> Edit</a>
+                        <button class="btn btn-sm btn-outline-danger" onclick="cancelReport(${r.id})"><i class="fas fa-times"></i> Cancel</button>`;
+                } else if (r.status === 'Resolved') {
+                    actions += r.feedback
+                        ? `<span class="text-warning small">${starsText(r.feedback.rating)}</span>`
+                        : `<button class="btn btn-sm btn-outline-warning" onclick="openFeedback('report', ${r.id})"><i class="fas fa-star"></i> Rate</button>`;
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${escapeHTML(r.date)}</td>
+                        <td>${escapeHTML(r.problemType)}</td>
+                        <td>${escapeHTML(r.wasteCategory)}</td>
+                        <td>${escapeHTML(r.location)}</td>
+                        <td><span class="badge ${badgeClass(r.status)}">${escapeHTML(r.status)}</span></td>
+                        <td class="text-nowrap">${actions}</td>
+                    </tr>`;
+            });
+        }
+
+        function viewReport(id) {
+            const r = getMine('trashwise_reports').find(x => x.id === id);
+            if (!r) return;
+
+            document.getElementById('detailTitle').textContent = 'Report Details';
+            document.getElementById('detailBody').innerHTML = `
+                <p><strong>Date:</strong> ${escapeHTML(r.date)}</p>
+                ${r.edited ? `<p><strong>Last edited:</strong> ${escapeHTML(r.edited)}</p>` : ''}
+                <p><strong>Problem:</strong> ${escapeHTML(r.problemType)}</p>
+                <p><strong>Category:</strong> ${escapeHTML(r.wasteCategory)}</p>
+                <p><strong>Location:</strong> ${escapeHTML(r.location)}</p>
+                <p><strong>Description:</strong><br>${escapeHTML(r.description || 'No description')}</p>
+                ${r.photo
+                    ? `<p><strong>Photo Evidence:</strong><br><img src="${r.photo}" class="img-fluid rounded border" alt="Photo evidence"></p>`
+                    : `<p><strong>Photo Evidence:</strong> <span class="text-muted">None provided</span></p>`}
+                <p><strong>Status:</strong> <span class="badge ${badgeClass(r.status)}">${escapeHTML(r.status)}</span></p>
+                ${feedbackBlock(r)}`;
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('detailModal')).show();
+        }
+
+        function cancelReport(id) {
+            if (!confirm('Cancel this report? This cannot be undone.')) return;
+            let list = getList('trashwise_reports');
+            const item = list.find(r => r.id === id && r.username === uname);
+
+            if (!item || item.status !== 'Pending') {
+                alert('Only pending reports can be cancelled.');
+                refreshAll();
+                return;
+            }
+            list = list.filter(r => r.id !== id);
+            localStorage.setItem('trashwise_reports', JSON.stringify(list));
+            refreshAll();
+        }
+
+       
+        function renderCollections(collections) {
+            const tbody = document.getElementById('collectionTableBody');
+            tbody.innerHTML = '';
+            document.getElementById('noCollections').style.display = collections.length ? 'none' : 'block';
+
+            collections.slice().reverse().forEach(c => {
+                let actions = `<button class="btn btn-sm btn-outline-green me-1" onclick="viewCollection(${c.id})"><i class="fas fa-eye"></i> View</button>`;
+
+                if (c.status === 'Pending') {
+                    actions += `<button class="btn btn-sm btn-outline-danger" onclick="cancelCollection(${c.id})"><i class="fas fa-times"></i> Cancel</button>`;
+                } else if (c.status === 'Completed') {
+                    actions += c.feedback
+                        ? `<span class="text-warning small">${starsText(c.feedback.rating)}</span>`
+                        : `<button class="btn btn-sm btn-outline-warning" onclick="openFeedback('collection', ${c.id})"><i class="fas fa-star"></i> Rate</button>`;
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${escapeHTML(c.date)}</td>
+                        <td>${escapeHTML(c.location)}</td>
+                        <td>${escapeHTML(c.wasteType)}</td>
+                        <td>${escapeHTML(c.amount)}</td>
+                        <td>${escapeHTML(c.preferredDate)}</td>
+                        <td><span class="badge ${badgeClass(c.status)}">${escapeHTML(c.status)}</span></td>
+                        <td class="text-nowrap">${actions}</td>
+                    </tr>`;
+            });
+        }
+
+        function viewCollection(id) {
+            const c = getMine('trashwise_collections').find(x => x.id === id);
+            if (!c) return;
+
+            document.getElementById('detailTitle').textContent = 'Collection Request Details';
+            document.getElementById('detailBody').innerHTML = `
+                <p><strong>Date Requested:</strong> ${escapeHTML(c.date)}</p>
+                <p><strong>Location:</strong> ${escapeHTML(c.location)}</p>
+                <p><strong>Waste Type:</strong> ${escapeHTML(c.wasteType)}</p>
+                <p><strong>Amount:</strong> ${escapeHTML(c.amount)}</p>
+                <p><strong>Preferred Date:</strong> ${escapeHTML(c.preferredDate)}</p>
+                <p><strong>Notes:</strong><br>${escapeHTML(c.notes || 'No notes')}</p>
+                <p><strong>Status:</strong> <span class="badge ${badgeClass(c.status)}">${escapeHTML(c.status)}</span></p>
+                ${feedbackBlock(c)}`;
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('detailModal')).show();
+        }
+
+        function cancelCollection(id) {
+            if (!confirm('Cancel this collection request? This cannot be undone.')) return;
+            let list = getList('trashwise_collections');
+            const item = list.find(c => c.id === id && c.username === uname);
+
+            if (!item || item.status !== 'Pending') {
+                alert('Only pending requests can be cancelled.');
+                refreshAll();
+                return;
+            }
+            list = list.filter(c => c.id !== id);
+            localStorage.setItem('trashwise_collections', JSON.stringify(list));
+            refreshAll();
+        }
+
+       
+        function feedbackBlock(item) {
+            if (!item.feedback) return '';
+            return `
+                <hr>
+                <p class="mb-1"><strong>Your feedback:</strong> <span class="text-warning">${starsText(item.feedback.rating)}</span></p>
+                ${item.feedback.comment ? `<p class="text-muted mb-0">${escapeHTML(item.feedback.comment)}</p>` : ''}`;
+        }
+
+        function setStars(n) {
+            feedbackRating = n;
+            document.querySelectorAll('#stars i').forEach(star => {
+                const filled = Number(star.dataset.v) <= n;
+                star.classList.toggle('fas', filled);
+                star.classList.toggle('far', !filled);
+            });
+        }
+
+        document.getElementById('stars').addEventListener('click', e => {
+            const star = e.target.closest('i[data-v]');
+            if (star) setStars(Number(star.dataset.v));
+        });
+
+        function openFeedback(type, id) {
+            feedbackTarget = { type, id };
+            setStars(0);
+            document.getElementById('feedbackComment').value = '';
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('feedbackModal')).show();
+        }
+
+        function submitFeedback() {
+            if (!feedbackRating) {
+                alert('Please select a star rating.');
+                return;
+            }
+            const key = feedbackTarget.type === 'report' ? 'trashwise_reports' : 'trashwise_collections';
+            const list = getList(key);
+            const item = list.find(x => x.id === feedbackTarget.id && x.username === uname);
+
+            if (item) {
+                item.feedback = {
+                    rating: feedbackRating,
+                    comment: document.getElementById('feedbackComment').value.trim(),
+                    date: new Date().toLocaleString()
+                };
+                localStorage.setItem(key, JSON.stringify(list));
+            }
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('feedbackModal')).hide();
+            refreshAll();
+        }
+
+       
+        function refreshAll() {
+            if (!isResident) return;
+            const reports = getMine('trashwise_reports');
+            const collections = getMine('trashwise_collections');
+            syncNotifications(reports, collections);
+            renderReports(reports);
+            renderCollections(collections);
+            renderNotifications();
+        }
+
+        function logout() {
+            localStorage.removeItem('trashwise_loggedInUser');
+            window.location.href = "login.html";
+        }
+
+        window.addEventListener('storage', e => {
+            if (e.key && e.key.startsWith('trashwise_')) refreshAll();
+        });
+
+        refreshAll();
+    </script>
+</body>
+</html>

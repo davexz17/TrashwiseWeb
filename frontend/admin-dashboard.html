@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - TrashWise</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background-color: #f1f8e9; font-family: 'Segoe UI', sans-serif; }
+        .navbar { background-color: #212121; }
+        .navbar-brand, .navbar-text { color: white !important; }
+        .card { border: none; border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+        .table thead { background-color: #212121; color: white; }
+        .nav-pills .nav-link.active { background-color: #212121; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <img src="logo.png" alt="TrashWise Logo" height="42">
+                <span class="fw-bold">TrashWise</span>
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="navbar-text" id="welcomeName">Welcome, Admin</span>
+                <a href="#" class="btn btn-outline-light btn-sm" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4 mb-5">
+        <h2 class="fw-bold mb-4">Admin Dashboard</h2>
+
+        <ul class="nav nav-pills mb-4">
+            <li class="nav-item">
+                <button class="nav-link active" id="btnReports" onclick="showSection('reports')">Waste Reports</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="btnCollections" onclick="showSection('collections')">Collection Requests</button>
+            </li>
+        </ul>
+
+        <div id="reportsSection">
+            <div class="row g-4 mb-4">
+                <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted">Total</h6><h3 id="totalReports">0</h3></div></div>
+                <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted">Pending</h6><h3 id="pendingReports" class="text-warning">0</h3></div></div>
+                <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted">In Progress</h6><h3 id="progressReports" class="text-primary">0</h3></div></div>
+                <div class="col-md-3"><div class="card text-center p-3"><h6 class="text-muted">Resolved</h6><h3 id="resolvedReports" class="text-success">0</h3></div></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">📋 Waste Reports</h5>
+                    <input type="text" id="searchReports" class="form-control form-control-sm w-25" placeholder="Search..." onkeyup="filterReports()">
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Resident</th>
+                                    <th>Problem</th>
+                                    <th>Category</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th width="220">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsTable"></tbody>
+                        </table>
+                    </div>
+                    <p id="noReports" class="text-center text-muted mt-3" style="display:none;">No reports found.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="collectionsSection" style="display:none;">
+            <div class="row g-4 mb-4">
+                <div class="col-md-4"><div class="card text-center p-3"><h6 class="text-muted">Total</h6><h3 id="totalCollections">0</h3></div></div>
+                <div class="col-md-4"><div class="card text-center p-3"><h6 class="text-muted">Pending</h6><h3 id="pendingCollections" class="text-warning">0</h3></div></div>
+                <div class="col-md-4"><div class="card text-center p-3"><h6 class="text-muted">Completed</h6><h3 id="completedCollections" class="text-success">0</h3></div></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">🚚 Collection Requests</h5>
+                    <input type="text" id="searchCollections" class="form-control form-control-sm w-25" placeholder="Search..." onkeyup="filterCollections()">
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Resident</th>
+                                    <th>Location</th>
+                                    <th>Waste Type</th>
+                                    <th>Amount</th>
+                                    <th>Preferred Date</th>
+                                    <th>Status</th>
+                                    <th width="220">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="collectionsTable"></tbody>
+                        </table>
+                    </div>
+                    <p id="noCollections" class="text-center text-muted mt-3" style="display:none;">No collection requests found.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="viewModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let allReports = [], allCollections = [];
+
+        const loggedInUser = JSON.parse(localStorage.getItem('trashwise_loggedInUser'));
+        if (!loggedInUser) {
+            alert("Please login first!");
+            window.location.href = "login.html";
+        }
+        document.getElementById('welcomeName').textContent = `Welcome, ${loggedInUser.fullname || loggedInUser.username}`;
+
+        function showSection(section) {
+            document.getElementById('reportsSection').style.display = section === 'reports' ? 'block' : 'none';
+            document.getElementById('collectionsSection').style.display = section === 'collections' ? 'block' : 'none';
+            document.getElementById('btnReports').classList.toggle('active', section === 'reports');
+            document.getElementById('btnCollections').classList.toggle('active', section === 'collections');
+        }
+
+        function loadReports() {
+            allReports = JSON.parse(localStorage.getItem('trashwise_reports')) || [];
+            renderReports(allReports);
+            document.getElementById('totalReports').textContent = allReports.length;
+            document.getElementById('pendingReports').textContent = allReports.filter(r => r.status === 'Pending').length;
+            document.getElementById('progressReports').textContent = allReports.filter(r => r.status === 'In Progress').length;
+            document.getElementById('resolvedReports').textContent = allReports.filter(r => r.status === 'Resolved').length;
+        }
+
+        function renderReports(list) {
+            const tbody = document.getElementById('reportsTable');
+            tbody.innerHTML = "";
+            if (list.length === 0) {
+                document.getElementById('noReports').style.display = "block";
+                return;
+            }
+            document.getElementById('noReports').style.display = "none";
+
+            list.slice().reverse().forEach(r => {
+                let badge = r.status === 'Pending' ? 'bg-warning text-dark' : r.status === 'In Progress' ? 'bg-primary' : 'bg-success';
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${r.date}</td>
+                        <td>${r.userName}</td>
+                        <td>${r.problemType}</td>
+                        <td>${r.wasteCategory}</td>
+                        <td>${r.location}</td>
+                        <td><span class="badge ${badge}">${r.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-dark me-1" onclick="viewReport(${r.id})"><i class="fas fa-eye"></i></button>
+                            <select class="form-select form-select-sm d-inline-block" style="width:120px" onchange="updateReportStatus(${r.id}, this.value)">
+                                <option value="Pending" ${r.status==='Pending'?'selected':''}>Pending</option>
+                                <option value="In Progress" ${r.status==='In Progress'?'selected':''}>In Progress</option>
+                                <option value="Resolved" ${r.status==='Resolved'?'selected':''}>Resolved</option>
+                            </select>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function filterReports() {
+            const keyword = document.getElementById('searchReports').value.toLowerCase();
+            const filtered = allReports.filter(r =>
+                r.userName.toLowerCase().includes(keyword) ||
+                r.problemType.toLowerCase().includes(keyword) ||
+                r.location.toLowerCase().includes(keyword) ||
+                r.status.toLowerCase().includes(keyword)
+            );
+            renderReports(filtered);
+        }
+
+        function viewReport(id) {
+            const r = allReports.find(x => x.id === id);
+            if (!r) return;
+            document.getElementById('modalBody').innerHTML = `
+                <p><strong>Date:</strong> ${r.date}</p>
+                <p><strong>Resident:</strong> ${r.userName}</p>
+                <p><strong>Problem:</strong> ${r.problemType}</p>
+                <p><strong>Category:</strong> ${r.wasteCategory}</p>
+                <p><strong>Location:</strong> ${r.location}</p>
+                <p><strong>Description:</strong><br>${r.description || 'No description'}</p>
+                ${r.photo
+                    ? `<p><strong>Photo Evidence:</strong><br><img src="${r.photo}" class="img-fluid rounded border" alt="Photo evidence"></p>`
+                    : `<p><strong>Photo Evidence:</strong> <span class="text-muted">None provided</span></p>`}
+                <p><strong>Status:</strong> ${r.status}</p>`;
+            new bootstrap.Modal(document.getElementById('viewModal')).show();
+        }
+
+        function updateReportStatus(id, status) {
+            let reports = JSON.parse(localStorage.getItem('trashwise_reports')) || [];
+            const report = reports.find(r => r.id === id);
+            if (report) {
+                report.status = status;
+                localStorage.setItem('trashwise_reports', JSON.stringify(reports));
+                loadReports();
+            }
+        }
+
+        function loadCollections() {
+            allCollections = JSON.parse(localStorage.getItem('trashwise_collections')) || [];
+            renderCollections(allCollections);
+            document.getElementById('totalCollections').textContent = allCollections.length;
+            document.getElementById('pendingCollections').textContent = allCollections.filter(c => c.status === 'Pending').length;
+            document.getElementById('completedCollections').textContent = allCollections.filter(c => c.status === 'Completed').length;
+        }
+
+        function renderCollections(list) {
+            const tbody = document.getElementById('collectionsTable');
+            tbody.innerHTML = "";
+            if (list.length === 0) {
+                document.getElementById('noCollections').style.display = "block";
+                return;
+            }
+            document.getElementById('noCollections').style.display = "none";
+
+            list.slice().reverse().forEach(c => {
+                let badge = c.status === 'Pending' ? 'bg-warning text-dark' : c.status === 'Scheduled' ? 'bg-primary' : 'bg-success';
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${c.date}</td>
+                        <td>${c.userName}</td>
+                        <td>${c.location}</td>
+                        <td>${c.wasteType}</td>
+                        <td>${c.amount}</td>
+                        <td>${c.preferredDate}</td>
+                        <td><span class="badge ${badge}">${c.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-dark me-1" onclick="viewCollection(${c.id})"><i class="fas fa-eye"></i></button>
+                            <select class="form-select form-select-sm d-inline-block" style="width:120px" onchange="updateCollectionStatus(${c.id}, this.value)">
+                                <option value="Pending" ${c.status==='Pending'?'selected':''}>Pending</option>
+                                <option value="Scheduled" ${c.status==='Scheduled'?'selected':''}>Scheduled</option>
+                                <option value="Completed" ${c.status==='Completed'?'selected':''}>Completed</option>
+                            </select>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        function filterCollections() {
+            const keyword = document.getElementById('searchCollections').value.toLowerCase();
+            const filtered = allCollections.filter(c =>
+                c.userName.toLowerCase().includes(keyword) ||
+                c.location.toLowerCase().includes(keyword) ||
+                c.wasteType.toLowerCase().includes(keyword) ||
+                c.status.toLowerCase().includes(keyword)
+            );
+            renderCollections(filtered);
+        }
+
+        function viewCollection(id) {
+            const c = allCollections.find(x => x.id === id);
+            if (!c) return;
+            document.getElementById('modalBody').innerHTML = `
+                <p><strong>Date:</strong> ${c.date}</p>
+                <p><strong>Resident:</strong> ${c.userName}</p>
+                <p><strong>Location:</strong> ${c.location}</p>
+                <p><strong>Waste Type:</strong> ${c.wasteType}</p>
+                <p><strong>Amount:</strong> ${c.amount}</p>
+                <p><strong>Preferred Date:</strong> ${c.preferredDate}</p>
+                <p><strong>Notes:</strong><br>${c.notes || 'No notes'}</p>
+                <p><strong>Status:</strong> ${c.status}</p>`;
+            new bootstrap.Modal(document.getElementById('viewModal')).show();
+        }
+
+        function updateCollectionStatus(id, status) {
+            let collections = JSON.parse(localStorage.getItem('trashwise_collections')) || [];
+            const item = collections.find(c => c.id === id);
+            if (item) {
+                item.status = status;
+                localStorage.setItem('trashwise_collections', JSON.stringify(collections));
+                loadCollections();
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('trashwise_loggedInUser');
+            window.location.href = "login.html";
+        }
+
+        loadReports();
+        loadCollections();
+    </script>
+</body>
+</html>

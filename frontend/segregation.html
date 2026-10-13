@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segregation Guide - TrashWise</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background-color: #f1f8e9; font-family: 'Segoe UI', sans-serif; }
+        .navbar { background-color: #2e7d32; }
+        .navbar-brand, .navbar-text { color: white !important; }
+        .navbar .nav-link { color: rgba(255,255,255,0.85) !important; font-weight: 500; }
+        .navbar .nav-link:hover, .navbar .nav-link.active { color: #fff !important; }
+        .card { border: none; border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+        .cat-icon { font-size: 1.8rem; }
+        .cat-card ul { padding-left: 1.1rem; margin-bottom: 0.75rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+                <img src="logo.png" alt="TrashWise Logo" height="42">
+                <span class="fw-bold">TrashWise</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="resident-dashboard.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="schedule.html">Schedule</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="segregation.html">Segregation Guide</a></li>
+                    <li class="nav-item"><a class="nav-link" href="disposal-locations.html">Disposal Locations</a></li>
+                    <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="navbar-text" id="welcomeName">Welcome, Resident</span>
+                    <a href="#" class="btn btn-outline-light btn-sm" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4 mb-5">
+        <h2 class="fw-bold mb-2" style="color:#1b5e20;">📖 Waste Segregation Guide</h2>
+        <p class="text-muted">Sorting your waste correctly makes collection and recycling easier.</p>
+
+        <div class="card p-4 mb-4">
+            <h5 class="mb-3"><i class="fas fa-search text-success"></i> Where does it go?</h5>
+            <input type="text" id="lookup" class="form-control" placeholder="Type an item, e.g. plastic bottle, banana peel, battery..." oninput="searchItem()">
+            <div id="lookupResult" class="mt-3"></div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card cat-card h-100 p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <i class="fas fa-seedling cat-icon text-success"></i>
+                        <h4 class="mb-0">Biodegradable</h4>
+                    </div>
+                    <p class="text-muted">Waste that decomposes naturally.</p>
+                    <strong>Examples</strong>
+                    <ul>
+                        <li>Food scraps and leftovers</li>
+                        <li>Fruit and vegetable peels</li>
+                        <li>Dry leaves and grass clippings</li>
+                        <li>Eggshells</li>
+                    </ul>
+                    <strong>Tips</strong>
+                    <ul class="mb-0">
+                        <li>Drain excess liquid before disposal.</li>
+                        <li>Use it for composting if you can.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card cat-card h-100 p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <i class="fas fa-recycle cat-icon text-primary"></i>
+                        <h4 class="mb-0">Recyclable</h4>
+                    </div>
+                    <p class="text-muted">Materials that can be processed into new products.</p>
+                    <strong>Examples</strong>
+                    <ul>
+                        <li>Clean paper, newspaper, cardboard</li>
+                        <li>Plastic bottles and containers</li>
+                        <li>Glass bottles and jars</li>
+                        <li>Metal and aluminum cans</li>
+                    </ul>
+                    <strong>Tips</strong>
+                    <ul class="mb-0">
+                        <li>Rinse and dry items before sorting.</li>
+                        <li>Flatten boxes and crush bottles to save space.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card cat-card h-100 p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <i class="fas fa-trash cat-icon text-secondary"></i>
+                        <h4 class="mb-0">Non-biodegradable</h4>
+                    </div>
+                    <p class="text-muted">Residual waste that cannot be composted or easily recycled.</p>
+                    <strong>Examples</strong>
+                    <ul>
+                        <li>Styrofoam and food packaging</li>
+                        <li>Sachets and candy wrappers</li>
+                        <li>Plastic bags</li>
+                        <li>Diapers and sanitary products</li>
+                    </ul>
+                    <strong>Tips</strong>
+                    <ul class="mb-0">
+                        <li>Keep it dry and tied in a bag.</li>
+                        <li>Reduce it by choosing reusable alternatives.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card cat-card h-100 p-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <i class="fas fa-biohazard cat-icon text-danger"></i>
+                        <h4 class="mb-0">Hazardous</h4>
+                    </div>
+                    <p class="text-muted">Waste that can harm people or the environment.</p>
+                    <strong>Examples</strong>
+                    <ul>
+                        <li>Batteries</li>
+                        <li>Fluorescent bulbs (CFL)</li>
+                        <li>Paint, solvents and motor oil</li>
+                        <li>Expired medicine and used syringes</li>
+                        <li>Aerosol cans</li>
+                    </ul>
+                    <strong>Tips</strong>
+                    <ul class="mb-0">
+                        <li>Never mix with regular trash.</li>
+                        <li>Keep sealed and bring to a designated drop-off point.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="disposal-locations.html" class="btn btn-success"><i class="fas fa-map-marker-alt"></i> Find a drop-off location</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const loggedInUser = JSON.parse(localStorage.getItem('trashwise_loggedInUser') || 'null');
+        if (!loggedInUser || (loggedInUser.role && loggedInUser.role !== 'resident')) {
+            alert("Please login first!");
+            window.location.href = "login.html";
+        } else {
+            document.getElementById('welcomeName').textContent =
+                `Welcome, ${loggedInUser.fullname || loggedInUser.username}`;
+        }
+
+        function logout() {
+            localStorage.removeItem('trashwise_loggedInUser');
+            window.location.href = "login.html";
+        }
+
+        const items = [
+            { name: "banana peel",        cat: "Biodegradable" },
+            { name: "fruit peel",         cat: "Biodegradable" },
+            { name: "vegetable scraps",   cat: "Biodegradable" },
+            { name: "leftover food",      cat: "Biodegradable" },
+            { name: "dry leaves",         cat: "Biodegradable" },
+            { name: "grass clippings",    cat: "Biodegradable" },
+            { name: "eggshell",           cat: "Biodegradable" },
+            { name: "newspaper",          cat: "Recyclable" },
+            { name: "cardboard",          cat: "Recyclable" },
+            { name: "paper",              cat: "Recyclable" },
+            { name: "plastic bottle",     cat: "Recyclable" },
+            { name: "glass bottle",       cat: "Recyclable" },
+            { name: "glass jar",          cat: "Recyclable" },
+            { name: "tin can",            cat: "Recyclable" },
+            { name: "aluminum can",       cat: "Recyclable" },
+            { name: "styrofoam",          cat: "Non-biodegradable" },
+            { name: "plastic bag",        cat: "Non-biodegradable" },
+            { name: "sachet",             cat: "Non-biodegradable" },
+            { name: "candy wrapper",      cat: "Non-biodegradable" },
+            { name: "diaper",             cat: "Non-biodegradable" },
+            { name: "cigarette butt",     cat: "Non-biodegradable" },
+            { name: "battery",            cat: "Hazardous" },
+            { name: "light bulb",         cat: "Hazardous" },
+            { name: "paint",              cat: "Hazardous" },
+            { name: "motor oil",          cat: "Hazardous" },
+            { name: "expired medicine",   cat: "Hazardous" },
+            { name: "syringe",            cat: "Hazardous" },
+            { name: "aerosol can",        cat: "Hazardous" }
+        ];
+
+        const catStyle = {
+            "Biodegradable":     "bg-success",
+            "Recyclable":        "bg-primary",
+            "Non-biodegradable": "bg-secondary",
+            "Hazardous":         "bg-danger"
+        };
+
+        function escapeHTML(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[ch]);
+        }
+
+        function searchItem() {
+            const term = document.getElementById('lookup').value.trim().toLowerCase();
+            const box = document.getElementById('lookupResult');
+
+            if (!term) { box.innerHTML = ''; return; }
+
+            const matches = items.filter(i => i.name.includes(term) || term.includes(i.name));
+
+            if (matches.length === 0) {
+                box.innerHTML = `<div class="text-muted">No match found. When in doubt, ask your barangay or municipal office.</div>`;
+                return;
+            }
+
+            box.innerHTML = matches.map(i => `
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge ${catStyle[i.cat]} p-2">${escapeHTML(i.cat)}</span>
+                    <span class="text-capitalize">${escapeHTML(i.name)}</span>
+                </div>`).join('');
+        }
+    </script>
+</body>
+</html>
